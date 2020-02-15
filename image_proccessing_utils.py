@@ -30,42 +30,42 @@ def draw_axis(img, rotate, tranlate, cam_mat, dist_coeff):
     return img, axisPoints[3].ravel()
 
 def order_points(pts):
-	# sort the points based on their x-coordinates
-	xSorted = pts[np.argsort(pts[:, 0]), :]
+    # sort the points based on their x-coordinates
+    xSorted = pts[np.argsort(pts[:, 0]), :]
 
-	# grab the left-most and right-most points from the sorted
-	# x-roodinate points
-	leftMost = xSorted[:2, :]
-	rightMost = xSorted[2:, :]
+    # grab the left-most and right-most points from the sorted
+    # x-coordinate points
+    leftMost = xSorted[:2, :]
+    rightMost = xSorted[2:, :]
 
-	# now, sort the left-most coordinates according to their
-	# y-coordinates so we can grab the top-left and bottom-left
-	# points, respectively
-	leftMost = leftMost[np.argsort(leftMost[:, 1]), :]
-	(tl, bl) = leftMost
+    # now, sort the left-most coordinates according to their
+    # y-coordinates so we can grab the top-left and bottom-left
+    # points, respectively
+    leftMost = leftMost[np.argsort(leftMost[:, 1]), :]
+    (tl, bl) = leftMost
 
-	# now that we have the top-left coordinate, use it as an
-	# anchor to calculate the Euclidean distance between the
-	# top-left and right-most points; by the Pythagorean
-	# theorem, the point with the largest distance will be
-	# our bottom-right point
-	D = dist.cdist(tl[np.newaxis], rightMost, "euclidean")[0]
-	(br, tr) = rightMost[np.argsort(D)[::-1], :]
+    # now that we have the top-left coordinate, use it as an
+    # anchor to calculate the Euclidean distance between the
+    # top-left and right-most points; by the Pythagorean
+    # theorem, the point with the largest distance will be
+    # our bottom-right point
+    D = dist.cdist(tl[np.newaxis], rightMost, "euclidean")[0]
+    (br, tr) = rightMost[np.argsort(D)[::-1], :]
 
-	# return the coordinates in top-left, top-right,
-	# bottom-right, and bottom-left order
-	return np.array([tl, tr, br, bl], dtype="int32")
+    # return the coordinates in top-left, top-right,
+    # bottom-right, and bottom-left order
+    return np.array([tl, tr, br, bl], dtype="int32")
 
 def get_mass_dir(cnt):
     rect = cv.minAreaRect(cnt)
     box = cv.boxPoints(rect)
     box = np.int0(box)
-    max = 0
+    max_num = 0
     a = 0
     for i in range(3):
         dis = get_dis(box[i], box[i + 1])
-        if dis > max:
-            max = dis
+        if dis > max_num:
+            max_num = dis
             a = get_slope(box[i], box[i + 1])
     return box, a
 
@@ -76,7 +76,7 @@ def show_images(images_array):
             try:
                 cv.imshow(str(i), image)
             except Exception as exc:
-                print exc
+                print(exc)
         cv.waitKey(1)
 
 
